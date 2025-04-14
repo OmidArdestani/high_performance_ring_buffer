@@ -1,4 +1,4 @@
-#include "HPRingBuffer.h"
+#include "HPRingBuffer.hpp"
 
 #include <iostream>
 #include <thread>
@@ -10,7 +10,7 @@ int main() {
     using clock = std::chrono::high_resolution_clock;
     auto start_time = clock::now();
 
-    constexpr uint64_t count = 100e6;
+    constexpr uint64_t count = 10e6;
 
     std::thread producer([&]() {
         for (uint64_t i = 0; i < count; ++i) {
