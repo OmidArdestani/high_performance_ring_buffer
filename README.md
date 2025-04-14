@@ -12,7 +12,7 @@ This project implements a **lock-free, low-latency ring buffer** in modern C++ w
 
 ## 🧪 Benchmark
 
-The `main()` function benchmarks the time taken to push and pop 10,000 items using the ring buffer.
+The `main()` function benchmarks the time taken to push and pop 10,000,000 items using the ring buffer.
 
 Sample output on a modern CPU:
 
