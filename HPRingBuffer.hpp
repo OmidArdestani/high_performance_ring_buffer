@@ -20,6 +20,8 @@ public:
     constexpr HPRingBuffer() noexcept : head_(0), tail_(0) {}
 
     [[nodiscard]] constexpr bool push(const T& item) noexcept {
+        const std::lock_guard<std::mutex> lock(mutexPush_);
+
         const auto head = head_.load(std::memory_order_relaxed);
         const auto next = increment(head);
         if (next == tail_.load(std::memory_order_acquire)) [[unlikely]] {
@@ -32,6 +34,8 @@ public:
     }
 
     [[nodiscard]] constexpr bool push(T&& item) noexcept {
+        const std::lock_guard<std::mutex> lock(mutexPush_);
+
         const auto head = head_.load(std::memory_order_relaxed);
         const auto next = increment(head);
         if (next == tail_.load(std::memory_order_acquire)) [[unlikely]] {
@@ -44,6 +48,8 @@ public:
     }
 
     [[nodiscard]] constexpr std::optional<T> pop() noexcept {
+        const std::lock_guard<std::mutex> lock(mutexPop_);
+
         const auto tail = tail_.load(std::memory_order_relaxed);
         if (tail == head_.load(std::memory_order_acquire)) [[unlikely]] {
             return std::nullopt;  // Empty
@@ -77,6 +83,8 @@ private:
     std::array<T, Size> buffer_;
     std::atomic<std::size_t> head_;
     std::atomic<std::size_t> tail_;
+    std::mutex mutexPush_;
+    std::mutex mutexPop_;
 
     [[nodiscard]] constexpr std::size_t increment(std::size_t idx) const noexcept {
         return (idx + 1) & (Size - 1); // wrap-around using bitmask
